@@ -42,7 +42,8 @@ class Robot {
 
         if (this.difficulty === 'easy') {
             return this.makeRandomTurn(boardState, this.color);
-        } else if (this.difficulty === 'hard') {
+        } else if (this.difficulty === 'hard')
+        {   
             return this.monteCarloMove(boardState, this.color);
         }
     }
@@ -266,8 +267,10 @@ class Robot {
 
         }
 
+
         let bestMove = this.getBestMoveFromTree(tree);
 
+     
         return bestMove;
 
     }

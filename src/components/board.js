@@ -189,7 +189,8 @@ class board extends React.Component {
 
     let oppColor = this.opposingColor(currentTurn);
 
-    if (this.gameOver(this.state.bState, oppColor)) {
+
+    if (this.gameOver(oppColor)) {
       this.setState({
         playerTurn: currentTurn + " wins"
       })
@@ -210,9 +211,10 @@ class board extends React.Component {
     }
   }
 
-  gameOver = (boardState, color) => {
+  gameOver = (color) => {
 
-    let moves = this.generateAllValidMoves( boardState, color);
+ 
+    let moves = this.generateAllValidMoves(  color);
 
     return moves.length === 0;
 
