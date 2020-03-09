@@ -209,7 +209,7 @@ class Robot {
                     if (this.checkInRange(capture.x, capture.y) && boardState[capture.x][capture.y].color === null) {
                         moves.push(capture);
                     }
-                }
+                }else
 
                 moves.push(move);
             })
@@ -258,7 +258,7 @@ class Robot {
         let root = new Node(this.makeCopy(boardState),color,null,0,0);
         let tree = new Tree(root);
 
-        let iterations = 50;
+        let iterations = 5000;
 
         while(iterations > 0){
             
@@ -270,6 +270,7 @@ class Robot {
 
         let bestMove = this.getBestMoveFromTree(tree);
 
+        console.log(tree)
      
         return bestMove;
 
@@ -281,7 +282,7 @@ class Robot {
         let bestNode = tree.root.children[0];
 
         tree.root.children.forEach((node)=>{
-            if((bestNode.wins/bestNode.sims)<(node.wins/node.sims)){
+            if((bestNode.sims)<(node.sims)){
                 bestNode = node
             }
         })
