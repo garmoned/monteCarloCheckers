@@ -136,7 +136,6 @@ class board extends React.Component {
         }
       })
   }
-
   capture = async (x, y, row, column, positionOfOpp, robot) => {
 
     let newBstate = this.state.bState;
@@ -161,6 +160,7 @@ class board extends React.Component {
     }
 
   }
+
 
   checkForCaptures = (oppColor) => {
 
@@ -199,6 +199,8 @@ class board extends React.Component {
         playerTurn: (oppColor)
       })
 
+      setTimeout(()=>{
+        
       this.checkForCaptures(oppColor);
 
       this.robots
@@ -207,6 +209,10 @@ class board extends React.Component {
             this.makeRobotMove(this.state.bState, robot);
           }
         })
+
+
+      },10)
+
 
     }
   }
@@ -278,11 +284,12 @@ class board extends React.Component {
       newBstate[row][column].king = true
     }
 
-    await this.setState({
+    this.setState({
       bstate: newBstate,
       selectedPiece: null
     })
 
+    this.forceUpdate();
 
 
   }
@@ -367,14 +374,14 @@ class board extends React.Component {
       value={val}
       x={x}
       y={y}
-      key={x + y + val}
+      key={x + y + val + king}
       king={king}
       sendSelection={this.getSelection}
     />;
   }
 
   displayBoard() {
-
+  
     return (this.state.bState.map((row, x) => {
       return (
         <div key={x} className="board-row">

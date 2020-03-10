@@ -1,6 +1,3 @@
-
-import { cloneDeep } from 'lodash'
-
 class Piece {
     constructor(color, x, y) {
         this.color = color;
@@ -18,7 +15,7 @@ class Tree {
 }
 
 class Node {
-    constructor(boardState, color, parent = null, wins = 0, sims = 0,move) {
+    constructor(boardState, color, parent = null, wins = 0, sims = 0, move) {
         this.boardState = boardState;
         this.color = color;
         this.wins = wins;
@@ -41,9 +38,12 @@ class Robot {
     playTurn(boardState) {
 
         if (this.difficulty === 'easy') {
+
             return this.makeRandomTurn(boardState, this.color);
-        } else if (this.difficulty === 'hard')
-        {   
+
+        } else if (this.difficulty === 'hard') {
+            //console.log(this.didWeWinSimulation(boardState,this.color))
+            //return this.makeRandomTurn(boardState, this.color);
             return this.monteCarloMove(boardState, this.color);
         }
     }
@@ -115,17 +115,24 @@ class Robot {
     }
 
     getLoser(boardState, color) {
-
+        //  this.printBoard(boardState)
         let moves = this.generateAllValidMoves(boardState, color);
 
         if (moves.length > 0) {
 
             let move = moves[Math.floor(moves.length * Math.random())]
-            let newBoardState = this.makeSimulatedMove(move, boardState);
+            let newBoardState = this.makeSimulatedMove(move, this.makeCopy(boardState));
             let newColor = this.opposingColor(color);
-            if (move.pieceMove.flag === 'capture') newColor = color;
-            return this.getLoser(newBoardState, newColor);
+
+            if (move.pieceMove.flag === 'capture') {
+                if (this.generateAllValidMoves(newBoardState, color)
+                    .some((move) => move.pieceMove.flag === 'capture'))
+
+                    newColor = color;
+            }
+            return this.getLoser(this.makeCopy(newBoardState), newColor);
         } else {
+
             return color;
         }
     }
@@ -209,9 +216,9 @@ class Robot {
                     if (this.checkInRange(capture.x, capture.y) && boardState[capture.x][capture.y].color === null) {
                         moves.push(capture);
                     }
-                }else
+                } else
 
-                moves.push(move);
+                    moves.push(move);
             })
         })
 
@@ -235,19 +242,19 @@ class Robot {
 
 
     makeCopy = (array) => {
-        let copy = cloneDeep(array);
+        let copy = JSON.parse(JSON.stringify(array))
         return copy
     }
 
     UCTvalue = (node) => {
 
-        let c = 1.41;
+        let c = 1.141;
 
-        let parentSims = node.parent !== null ? node.parent.sims : 1 
+        let parentSims = node.parent !== null ? node.parent.sims : 1
 
-        if(node.sims === 0) return 100000;
+        if (node.sims === 0) return Infinity;
 
-        return (node.wins / node.sims) + c * Math.pow(Math.log(parentSims) / node.sims,.5);
+        return (node.wins / node.sims) + c * Math.pow(Math.log(parentSims) / node.sims, .5);
 
     }
 
@@ -255,25 +262,49 @@ class Robot {
     monteCarloMove = (boardState, color) => {
 
 
-        let root = new Node(this.makeCopy(boardState),color,null,0,0);
+        let root = new Node(this.makeCopy(boardState), this.opposingColor(this.color), null, 0, 0);
         let tree = new Tree(root);
 
-        let iterations = 5000;
+        let iterations = 1000;
 
-        while(iterations > 0){
+        let testForOne = this.generateAllValidMoves(boardState, color);
+
+        console.log(testForOne);
+
+        if (testForOne.length === 1) {
             
-            this.expandTree(tree); 
-            iterations--;
+            return testForOne[0]
+
+        } else {
+
+
+            while (iterations > 0) {
+
+                this.expandTree(tree);
+                iterations--;
+
+            }
+
+
+            let bestMove = this.getBestMoveFromTree(tree);
+
+            console.log(tree)
+
+            return bestMove;
+
+
 
         }
 
 
-        let bestMove = this.getBestMoveFromTree(tree);
+    }
 
-        console.log(tree)
-     
-        return bestMove;
-
+    printBoard = (boardState) => {
+        console.log(boardState.map((row) => {
+            return row.map((piece) => {
+                return piece.color
+            })
+        }))
     }
 
 
@@ -281,8 +312,8 @@ class Robot {
 
         let bestNode = tree.root.children[0];
 
-        tree.root.children.forEach((node)=>{
-            if((bestNode.sims)<(node.sims)){
+        tree.root.children.forEach((node) => {
+            if ((bestNode.sims) < (node.sims)) {
                 bestNode = node
             }
         })
@@ -291,16 +322,16 @@ class Robot {
     }
 
 
-    expandTree = (tree) =>{
-        
+    expandTree = (tree) => {
+
         let promisingNode = this.selectNode(tree.root);
 
         this.expandNode(promisingNode);
 
-        if(promisingNode.children.length  > 0){
-            let testNode = promisingNode.children[Math.floor(promisingNode.children.length*Math.random())]
+        if (promisingNode.children.length > 0) {
+            let testNode = promisingNode.children[Math.floor(promisingNode.children.length * Math.random())]
             let win = this.playOut(testNode)
-            this.backPropagate(testNode,win)
+            this.backPropagate(testNode, win)
         }
     }
 
@@ -330,10 +361,10 @@ class Robot {
     }
 
     expandNode = (node) => {
-        let moves = this.generateAllValidMoves(node.boardState, node.color);
+        let moves = this.generateAllValidMoves(node.boardState, this.opposingColor(node.color));
         moves.forEach((move) => {
             let newBoardState = this.makeSimulatedMove(move, this.makeCopy(node.boardState))
-            let newNode = new Node(newBoardState, node.color, node, 0, 0,move);
+            let newNode = new Node(newBoardState, this.opposingColor(node), node, 0, 0, move);
             node.children.push(newNode);
         })
     }
@@ -352,12 +383,12 @@ class Robot {
 
     }
 
-    backPropagate = (node,win) => {
+    backPropagate = (node, win) => {
 
         if (node.parent !== null) {
             node.parent.wins += win ? 1 : 0;
-            node.parent.sims++; 
-            this.backPropagate(node.parent,win);
+            node.parent.sims++;
+            this.backPropagate(node.parent, win);
         }
 
     }
