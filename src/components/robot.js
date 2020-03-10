@@ -44,7 +44,7 @@ class Robot {
         } else if (this.difficulty === 'hard') {
             //console.log(this.didWeWinSimulation(boardState,this.color))
             //return this.makeRandomTurn(boardState, this.color);
-            return this.monteCarloMove(boardState, this.color);
+            return this.monteCarloMove(boardState, this.color, 2000);
         }
     }
 
@@ -259,20 +259,16 @@ class Robot {
     }
 
 
-    monteCarloMove = (boardState, color) => {
+    monteCarloMove = (boardState, color, iterations) => {
 
 
         let root = new Node(this.makeCopy(boardState), this.opposingColor(this.color), null, 0, 0);
         let tree = new Tree(root);
 
-        let iterations = 1000;
-
         let testForOne = this.generateAllValidMoves(boardState, color);
 
-        console.log(testForOne);
-
         if (testForOne.length === 1) {
-            
+
             return testForOne[0]
 
         } else {
@@ -328,11 +324,16 @@ class Robot {
 
         this.expandNode(promisingNode);
 
-        if (promisingNode.children.length > 0) {
-            let testNode = promisingNode.children[Math.floor(promisingNode.children.length * Math.random())]
-            let win = this.playOut(testNode)
-            this.backPropagate(testNode, win)
+        let testNode = promisingNode.children[Math.floor(promisingNode.children.length * Math.random())];
+
+        if (promisingNode.children.length === 0) {
+            testNode = promisingNode;
         }
+
+        let win = this.playOut(testNode)
+        this.backPropagate(testNode, win)
+       
+        
     }
 
 
@@ -361,10 +362,21 @@ class Robot {
     }
 
     expandNode = (node) => {
-        let moves = this.generateAllValidMoves(node.boardState, this.opposingColor(node.color));
+
+        let newColor = this.opposingColor(node.color)
+
+        if ((node.move !== undefined) && (node.move.pieceMove.flag === 'capture')
+            && this.generateAllValidMoves(node.boardState, node.color)
+                .some((move) => move.pieceMove.flag === 'capture')) {
+            newColor = node.color
+        }
+
+        let moves = this.generateAllValidMoves(node.boardState, newColor);
+
+
         moves.forEach((move) => {
             let newBoardState = this.makeSimulatedMove(move, this.makeCopy(node.boardState))
-            let newNode = new Node(newBoardState, this.opposingColor(node), node, 0, 0, move);
+            let newNode = new Node(newBoardState, newColor, node, 0, 0, move);
             node.children.push(newNode);
         })
     }
@@ -372,7 +384,7 @@ class Robot {
     playOut = (node) => {
 
 
-        let winning = this.didWeWinSimulation(this.makeCopy(node.boardState), node.color);
+        let winning = this.didWeWinSimulation(this.makeCopy(node.boardState), this.color);
 
         if (winning) {
             node.wins++;
