@@ -115,7 +115,7 @@ class Robot {
     }
 
     getLoser(boardState, color) {
-        //  this.printBoard(boardState)
+
         let moves = this.generateAllValidMoves(boardState, color);
 
         if (moves.length > 0) {
@@ -127,10 +127,11 @@ class Robot {
             if (move.pieceMove.flag === 'capture') {
                 if (this.generateAllValidMoves(newBoardState, color)
                     .some((move) => move.pieceMove.flag === 'capture'))
-
                     newColor = color;
             }
+
             return this.getLoser(this.makeCopy(newBoardState), newColor);
+
         } else {
 
             return color;

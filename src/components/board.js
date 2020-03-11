@@ -24,6 +24,7 @@ class board extends React.Component {
     this.robots = [];
 
     this.robots.push(new Robot('hard', 'r'))
+    
     //this.robots.push(new Robot('easy', 'w'))
 
     this.state = {
