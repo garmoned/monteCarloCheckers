@@ -1,11 +1,13 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
+import App from './components/app';
 
-import Board from './components/board'
-
+import "bootstrap/dist/css/bootstrap.css"
 import './index.css'
 
 ReactDOM.render(
-    <Board></Board>,
+    <div>
+        <App/>
+    </div>,
     document.getElementById('root')
     );

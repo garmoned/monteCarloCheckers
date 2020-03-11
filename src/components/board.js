@@ -43,12 +43,16 @@ class board extends React.Component {
 
   componentDidMount() {
 
-    this.robots
-      .forEach((robot) => {
-        if (this.state.playerTurn === robot.color) {
-          this.makeRobotMove(this.state.bState, robot);
-        }
-      })
+    setTimeout(()=>{
+      
+      this.robots
+        .forEach((robot) => {
+          if (this.state.playerTurn === robot.color) {
+            this.makeRobotMove(this.state.bState, robot);
+          }
+        })
+
+      },10)
 
   }
 
@@ -82,16 +86,37 @@ class board extends React.Component {
 
   }
 
+  selectPiece = async (row,column)=>{
+    let newBstate = this.state.bState;
+    newBstate[row][column].selected = true;
+    await this.setState({ selectedPiece: this.state.bState[row][column],
+    bState:newBstate })
+  }
+
+  deselectPiece = async (row,column)=>{
+    let newBstate = this.state.bState;
+    newBstate[row][column].selected = false;
+    await this.setState({ selectedPiece: null })
+  }
+
   changeSelection = async (row, column) => {
 
-    if (this.state.selectedPiece === null) {
-      await this.setState({ selectedPiece: this.state.bState[row][column] })
-    } else if (this.state.selectedPiece.x === row &&
-      this.state.selectedPiece.y === column) {
-      await this.setState({ selectedPiece: null });
+    if (this.state.selectedPiece === null ||(
+      this.state.selectedPiece !== null && 
+      this.state.selectedPiece.x !== row &&
+      this.state.selectedPiece.y !== column )) {
+
+      await this.selectPiece(row,column);
+
     } else {
-      await this.setState({ selectedPiece: this.state.bState[row][column] })
+
+      console.log("here")
+
+      this.deselectPiece(row,column)
+
     }
+
+
   }
 
   getSelection = async (row, column) => {
@@ -369,12 +394,13 @@ class board extends React.Component {
   }
 
 
-  renderSquare(val, x, y, king) {
+  renderSquare(val, x, y, king,selected) {
     return <Square
       value={val}
       x={x}
       y={y}
       key={x + y + val + king}
+      selected = {selected}
       king={king}
       sendSelection={this.getSelection}
     />;
@@ -387,7 +413,7 @@ class board extends React.Component {
         <div key={x} className="board-row">
           {row.map((piece, y) => {
 
-            return this.renderSquare(piece.color, x, y, piece.king)
+            return this.renderSquare(piece.color, x, y, piece.king,piece.selected)
           })}
         </div>)
     }))
@@ -397,7 +423,7 @@ class board extends React.Component {
     const status = 'Player Turn: ';
 
     return (
-      <div>
+      <div className = "board">
 
         <div className="status">{status + this.state.playerTurn}</div>
 

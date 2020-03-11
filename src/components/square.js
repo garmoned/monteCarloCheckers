@@ -7,7 +7,7 @@ class square extends React.Component {
   
         this.state = {
             value: props.value,
-            selected : false,
+            selected : props.selected,
             x : props.x,
             y : props.y,
             sendSelection : props.sendSelection.bind(this),
@@ -32,7 +32,7 @@ class square extends React.Component {
 
     render() {
       return (
-        <button className="square" 
+        <button className={`square ${this.state.selected? " focus":""}`}
         onClick={this.select}
         >
           {this.renderPiece()}

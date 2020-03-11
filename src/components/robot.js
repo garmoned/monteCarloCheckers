@@ -44,7 +44,7 @@ class Robot {
         } else if (this.difficulty === 'hard') {
             //console.log(this.didWeWinSimulation(boardState,this.color))
             //return this.makeRandomTurn(boardState, this.color);
-            return this.monteCarloMove(boardState, this.color, 2000);
+            return this.monteCarloMove(boardState, this.color, 1000);
         }
     }
 
