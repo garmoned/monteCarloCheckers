@@ -24,7 +24,7 @@ class board extends React.Component {
     this.robots = [];
 
     this.robots.push(new Robot('hard', 'r'))
-    
+
     //this.robots.push(new Robot('easy', 'w'))
 
     this.state = {
@@ -45,7 +45,7 @@ class board extends React.Component {
   componentDidMount() {
 
     setTimeout(()=>{
-      
+
       this.robots
         .forEach((robot) => {
           if (this.state.playerTurn === robot.color) {
@@ -103,15 +103,13 @@ class board extends React.Component {
   changeSelection = async (row, column) => {
 
     if (this.state.selectedPiece === null ||(
-      this.state.selectedPiece !== null && 
+      this.state.selectedPiece !== null &&
       this.state.selectedPiece.x !== row &&
       this.state.selectedPiece.y !== column )) {
 
       await this.selectPiece(row,column);
 
     } else {
-
-      console.log("here")
 
       this.deselectPiece(row,column)
 
@@ -226,7 +224,7 @@ class board extends React.Component {
       })
 
       setTimeout(()=>{
-        
+
       this.checkForCaptures(oppColor);
 
       this.robots
@@ -245,7 +243,7 @@ class board extends React.Component {
 
   gameOver = (color) => {
 
- 
+
     let moves = this.generateAllValidMoves(  color);
 
     return moves.length === 0;
@@ -286,9 +284,11 @@ class board extends React.Component {
   }
 
 
-  makeRobotMove = (boardState, robot) => {
+  makeRobotMove = async (boardState, robot) => {
 
-    let roboMove = robot.playTurn(boardState);
+    let roboMove = await robot.playTurn(boardState);
+    console.log(roboMove,"<-- roboMove")
+
 
     this.tryToMove(roboMove.piece.xpos, roboMove.piece.ypos,
       roboMove.pieceMove.x, roboMove.pieceMove.y, robot)
@@ -408,7 +408,7 @@ class board extends React.Component {
   }
 
   displayBoard() {
-  
+
     return (this.state.bState.map((row, x) => {
       return (
         <div key={x} className="board-row">

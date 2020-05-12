@@ -1,3 +1,5 @@
+const axios = require('axios')
+
 class Piece {
     constructor(color, x, y) {
         this.color = color;
@@ -35,16 +37,36 @@ class Robot {
     }
 
 
-    playTurn(boardState) {
+    async playTurn(boardState) {
 
         if (this.difficulty === 'easy') {
-
             return this.makeRandomTurn(boardState, this.color);
 
         } else if (this.difficulty === 'hard') {
-            //console.log(this.didWeWinSimulation(boardState,this.color))
-            //return this.makeRandomTurn(boardState, this.color);
-            return this.monteCarloMove(boardState, this.color, 1000);
+
+              let boardJson = JSON.stringify(boardState);
+              boardJson = boardJson.replace(/king/g,"King");
+              boardJson = boardJson.replace(/color/g,"Color");
+              boardJson = boardJson.replace(/x/g,"X");
+              boardJson = boardJson.replace(/y/g,"Y");
+              boardJson = boardJson.replace(/null/g,`"null"`);
+
+
+              let request = {
+                board:JSON.parse(boardJson),
+                color:this.color
+              }
+
+              var move;
+
+              await axios.post('https://checkersgo.uc.r.appspot.com/',JSON.stringify(request))
+              .then((res,err)=>{
+
+                  move = res.data
+              });
+
+            console.log(move,"<---Move")
+            return move;
         }
     }
 
@@ -285,24 +307,13 @@ class Robot {
 
             let bestMove = this.getBestMoveFromTree(tree);
 
-            console.log(tree)
-
             return bestMove;
-
-
 
         }
 
 
     }
 
-    printBoard = (boardState) => {
-        console.log(boardState.map((row) => {
-            return row.map((piece) => {
-                return piece.color
-            })
-        }))
-    }
 
 
     getBestMoveFromTree = (tree) => {
@@ -333,8 +344,8 @@ class Robot {
 
         let win = this.playOut(testNode)
         this.backPropagate(testNode, win)
-       
-        
+
+
     }
 
 
