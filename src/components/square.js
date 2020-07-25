@@ -2,44 +2,53 @@ import React from 'react';
 
 class square extends React.Component {
 
-    constructor(props){
-        super(props);
-  
-        this.state = {
-            value: props.value,
-            selected : props.selected,
-            x : props.x,
-            y : props.y,
-            sendSelection : props.sendSelection.bind(this),
-            king : props.king
-        };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: props.value,
+      selected: props.selected,
+      x: props.x,
+      y: props.y,
+      sendSelection: props.sendSelection.bind(this),
+      king: props.king,
+      playerColor: props.playerColor
+    };
+  }
+
+  select = async () => {
+
+    if (this.state.value == this.state.playerColor )
+      this.setState({ selected: true });
+
+      this.state.sendSelection(this.state.x, this.state.y);
+
+  }
+
+  renderPiece = () => {
+
+    return <span className={this.state.value}>{this.renderking()}</span>
+  }
+
+  renderking = () => {
+    if (this.state.king == true) {
+      return "K"
     }
+  }
 
-    select = async () =>{
-      this.setState({selected:true});
-      this.state.sendSelection(this.state.x,this.state.y);
-    }
+  render() {
 
-    renderPiece = () => {
-      
-      if(this.state.king ===  true){
-        return this.state.value === "r" ? "R" : "W";
-      }else{
-        return this.state.value;
-      }
-    }
+    let className = this.state.selected;
 
-
-    render() {
-      return (
-        <button className={`square ${this.state.selected? " focus":""}`}
+    return (
+      <button className={"square " + className}
         onClick={this.select}
-        >
-          {this.renderPiece()}
-    
-        </button>
-      );
-    }
-} 
+      >
+        {this.renderPiece()}
+
+      </button>
+    );
+  }
+}
 
 export default square;

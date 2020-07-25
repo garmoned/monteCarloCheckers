@@ -38,13 +38,12 @@ class board extends React.Component {
       bState: this.initBoardState()
 
     }
-
   }
 
 
   componentDidMount() {
 
-    setTimeout(()=>{
+    setTimeout(() => {
 
       this.robots
         .forEach((robot) => {
@@ -53,7 +52,7 @@ class board extends React.Component {
           }
         })
 
-      },10)
+    }, 10)
 
   }
 
@@ -87,14 +86,24 @@ class board extends React.Component {
 
   }
 
-  selectPiece = async (row,column)=>{
+  selectPiece = async (row, column) => {
+
+    console.log("selected piece ->> ", this.state.selectedPiece)
+
     let newBstate = this.state.bState;
     newBstate[row][column].selected = true;
-    await this.setState({ selectedPiece: this.state.bState[row][column],
-    bState:newBstate })
+
+    if (this.state.selectedPiece !== null) {
+      console.log("deselecting piece")
+      newBstate[this.state.selectedPiece.x][this.state.selectedPiece.y].selected = false;
+    }
+    await this.setState({
+      selectedPiece: newBstate[row][column],
+      bState: newBstate
+    })
   }
 
-  deselectPiece = async (row,column)=>{
+  deselectPiece = async (row, column) => {
     let newBstate = this.state.bState;
     newBstate[row][column].selected = false;
     await this.setState({ selectedPiece: null })
@@ -102,16 +111,16 @@ class board extends React.Component {
 
   changeSelection = async (row, column) => {
 
-    if (this.state.selectedPiece === null ||(
-      this.state.selectedPiece !== null &&
-      this.state.selectedPiece.x !== row &&
-      this.state.selectedPiece.y !== column )) {
+    if (this.state.selectedPiece === null || (
+      this.state.selectedPiece !== null &&(
+      this.state.selectedPiece.x !== row ||
+      this.state.selectedPiece.y !== column))) {
 
-      await this.selectPiece(row,column);
+      await this.selectPiece(row, column);
 
     } else {
 
-      this.deselectPiece(row,column)
+      this.deselectPiece(row, column)
 
     }
 
@@ -160,6 +169,7 @@ class board extends React.Component {
         }
       })
   }
+
   capture = async (x, y, row, column, positionOfOpp, robot) => {
 
     let newBstate = this.state.bState;
@@ -223,19 +233,19 @@ class board extends React.Component {
         playerTurn: (oppColor)
       })
 
-      setTimeout(()=>{
+      setTimeout(() => {
 
-      this.checkForCaptures(oppColor);
+        this.checkForCaptures(oppColor);
 
-      this.robots
-        .forEach((robot) => {
-          if (oppColor === robot.color) {
-            this.makeRobotMove(this.state.bState, robot);
-          }
-        })
+        this.robots
+          .forEach((robot) => {
+            if (oppColor === robot.color) {
+              this.makeRobotMove(this.state.bState, robot);
+            }
+          })
 
 
-      },10)
+      }, 10)
 
 
     }
@@ -244,7 +254,7 @@ class board extends React.Component {
   gameOver = (color) => {
 
 
-    let moves = this.generateAllValidMoves(  color);
+    let moves = this.generateAllValidMoves(color);
 
     return moves.length === 0;
 
@@ -287,7 +297,7 @@ class board extends React.Component {
   makeRobotMove = async (boardState, robot) => {
 
     let roboMove = await robot.playTurn(boardState);
-    console.log(roboMove,"<-- roboMove")
+    console.log(roboMove, "<-- roboMove")
 
 
     this.tryToMove(roboMove.piece.xpos, roboMove.piece.ypos,
@@ -304,6 +314,10 @@ class board extends React.Component {
     newBstate[row][column].x = row;
     newBstate[row][column].y = column;
     newBstate[x][y] = new Piece(null, x, y);
+
+    if (this.state.selectedPiece !== null) {
+      newBstate[this.state.selectedPiece.x][this.state.selectedPiece.y].selected = false;
+    }
 
     if ((newBstate[row][column].color === 'w' && row === 0) ||
       (newBstate[row][column].color === 'r' && row === 7)) {
@@ -393,17 +407,25 @@ class board extends React.Component {
 
 
   }
+  select = (selected) => {
+    if (selected !== undefined) {
+      return "" + selected;
+    } else {
+      return ""
+    }
+  }
 
 
-  renderSquare(val, x, y, king,selected) {
+  renderSquare(val, x, y, king, selected) {
     return <Square
       value={val}
       x={x}
       y={y}
-      key={x + y + val + king}
-      selected = {selected}
+      key={x * 8 + y + val + king + this.select(selected)}
+      selected={selected}
       king={king}
-      sendSelection={this.getSelection}
+      sendSelection={this.getSelection.bind(this)}
+      playerColor={"w"}
     />;
   }
 
@@ -413,8 +435,7 @@ class board extends React.Component {
       return (
         <div key={x} className="board-row">
           {row.map((piece, y) => {
-
-            return this.renderSquare(piece.color, x, y, piece.king,piece.selected)
+            return this.renderSquare(piece.color, x, y, piece.king, piece.selected)
           })}
         </div>)
     }))
@@ -424,7 +445,7 @@ class board extends React.Component {
     const status = 'Player Turn: ';
 
     return (
-      <div className = "board">
+      <div className="board">
 
         <div className="status">{status + this.state.playerTurn}</div>
 
