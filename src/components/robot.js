@@ -59,7 +59,7 @@ class Robot {
 
               var move;
 
-              await axios.post('https://checkersgo.uc.r.appspot.com/',JSON.stringify(request))
+              await axios.post('https://checkersgo.herokuapp.com/',JSON.stringify(request))
               .then((res,err)=>{
 
                   move = res.data
