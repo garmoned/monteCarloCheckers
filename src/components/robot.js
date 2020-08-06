@@ -51,7 +51,6 @@ class Robot {
               boardJson = boardJson.replace(/y/g,"Y");
               boardJson = boardJson.replace(/null/g,`"null"`);
 
-
               let request = {
                 board:JSON.parse(boardJson),
                 color:this.color
@@ -61,7 +60,6 @@ class Robot {
 
               await axios.post('https://checkersgo.herokuapp.com/',JSON.stringify(request))
               .then((res,err)=>{
-
                   move = res.data
               });
 

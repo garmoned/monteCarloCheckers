@@ -30,14 +30,14 @@ class board extends React.Component {
     this.state = {
 
       playerTurn: 'r',
-
       capturePossible: false,
-
       selectedPiece: null,
-
-      bState: this.initBoardState()
+      bState: this.initBoardState(),
+      humanColor :"w"
 
     }
+
+
   }
 
 
@@ -88,13 +88,11 @@ class board extends React.Component {
 
   selectPiece = async (row, column) => {
 
-    console.log("selected piece ->> ", this.state.selectedPiece)
-
     let newBstate = this.state.bState;
     newBstate[row][column].selected = true;
 
     if (this.state.selectedPiece !== null) {
-      console.log("deselecting piece")
+
       newBstate[this.state.selectedPiece.x][this.state.selectedPiece.y].selected = false;
     }
     await this.setState({
@@ -130,8 +128,6 @@ class board extends React.Component {
   getSelection = async (row, column) => {
 
     await this.humanMove(row, column);
-
-
   }
 
 
@@ -425,7 +421,8 @@ class board extends React.Component {
       selected={selected}
       king={king}
       sendSelection={this.getSelection.bind(this)}
-      playerColor={"w"}
+      currentTurnColor={this.state.playerTurn}
+      playerColor={this.state.humanColor}
     />;
   }
 

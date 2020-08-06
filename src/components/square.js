@@ -17,12 +17,8 @@ class square extends React.Component {
   }
 
   select = async () => {
-
-    if (this.state.value == this.state.playerColor )
-      this.setState({ selected: true });
-
+      if(this.state.value === this.state.playerColor || this.state.value === null)
       this.state.sendSelection(this.state.x, this.state.y);
-
   }
 
   renderPiece = () => {
