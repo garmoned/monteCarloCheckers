@@ -23,9 +23,9 @@ class board extends React.Component {
 
     this.robots = [];
 
-    this.robots.push(new Robot('hard', 'r'))
+    //this.robots.push(new Robot('hard', 'w' , 1000, 5))
 
-    //this.robots.push(new Robot('easy', 'w'))
+    this.robots.push(new Robot('hard', 'r' , 1000, 50))
 
     this.state = {
 
@@ -350,7 +350,6 @@ class board extends React.Component {
     ydirs.forEach((ydir) => {
 
       let xdirs = []
-
       if (this.state.bState[xpos][ypos].king) {
         xdirs.push(-1)
         xdirs.push(1)

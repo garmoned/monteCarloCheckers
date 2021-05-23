@@ -17,6 +17,7 @@ class App extends React.Component {
             <div>
                 <div className="game" >
                     <Board />
+                    <Controls></Controls>
                 </div>
             </div>
 

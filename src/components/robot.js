@@ -26,14 +26,18 @@ class Node {
         this.children = [];
         this.move = move;
     }
+    
 }
 
 
 class Robot {
 
-    constructor(diff, color) {
-        this.difficulty = diff;
+
+    constructor(diff, color, iterations, threads){
+        this.difficulty = diff
+        this.iterations = iterations
         this.color = color
+        this.threads = threads
     }
 
 
@@ -53,12 +57,14 @@ class Robot {
 
               let request = {
                 board:JSON.parse(boardJson),
-                color:this.color
+                color:this.color,
+                iterations:this.iterations,
+                threads:this.threads
               }
 
               var move;
 
-              await axios.post('https://checkersgo.herokuapp.com/',JSON.stringify(request))
+              await axios.post('http://localhost:8080/',JSON.stringify(request))
               .then((res,err)=>{
                   move = res.data
               });

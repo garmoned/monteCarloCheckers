@@ -6,11 +6,7 @@ class controls extends React.Component{
         return(
        <nav className = "float-left text-center ml-5">
            <div>
-            <button
-            className = {"btn btn-danger font-weight-bold text-dark m-2"}
-            >
-               RESET
-            </button>
+        
            </div>
        </nav>
         )
