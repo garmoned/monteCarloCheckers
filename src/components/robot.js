@@ -1,5 +1,7 @@
 const axios = require('axios')
 
+const cloudURL = "https://checkersgo.herokuapp.com/"
+
 class Piece {
     constructor(color, x, y) {
         this.color = color;
@@ -64,7 +66,7 @@ class Robot {
 
               var move;
 
-              await axios.post('http://localhost:8080/',JSON.stringify(request))
+              await axios.post(cloudURL,JSON.stringify(request))
               .then((res,err)=>{
                   move = res.data
               });

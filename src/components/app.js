@@ -1,4 +1,4 @@
-import Board from "./board"
+import Board from "./board
 import Controls from "./controls"
 import React from "react"
 
