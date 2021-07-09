@@ -11,6 +11,7 @@ ul {
 }
 
 .board {
+
     padding: 10px;
 }
 
@@ -21,12 +22,18 @@ ul {
 }
 
 .game {
+
     display: block;
     text-align: center;
 }
 
 .status {
     margin-bottom: 10px;
+}
+
+.controls{
+    display: flex;
+    flex-direction: column;
 }
 
 .square {

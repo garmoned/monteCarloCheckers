@@ -1,6 +1,7 @@
 import Square from './square'
 import React from 'react';
 import Robot from './robot';
+import Controls from "./controls";
 
 class Piece {
   constructor(color, x, y) {
@@ -9,8 +10,6 @@ class Piece {
     this.x = x;
     this.y = y;
   }
-
-
 
 }
 
@@ -37,6 +36,8 @@ class board extends React.Component {
 
     }
 
+    this.threads = 10
+    this.iterations = 1000
 
   }
 
@@ -48,7 +49,7 @@ class board extends React.Component {
       this.robots
         .forEach((robot) => {
           if (this.state.playerTurn === robot.color) {
-            this.makeRobotMove(this.state.bState, robot);
+            this.makeRobotMove(this.state.bState, robot, this.threads, this.iterations);
           }
         })
 
@@ -247,6 +248,22 @@ class board extends React.Component {
     }
   }
 
+  reset = () =>{
+
+    this.setState({bState:this.initBoardState(), playerTurn:'r'})
+    setTimeout(() => {
+
+      this.robots
+          .forEach((robot) => {
+            if (this.state.playerTurn === robot.color) {
+              this.makeRobotMove(this.state.bState, robot, this.threads, this.iterations);
+            }
+          })
+
+    }, 10)
+  }
+
+
   gameOver = (color) => {
 
 
@@ -292,7 +309,7 @@ class board extends React.Component {
 
   makeRobotMove = async (boardState, robot) => {
 
-    let roboMove = await robot.playTurn(boardState);
+    let roboMove = await robot.playTurn(boardState,this.iterations,this.threads);
     console.log(roboMove, "<-- roboMove")
 
 
@@ -433,21 +450,38 @@ class board extends React.Component {
           {row.map((piece, y) => {
             return this.renderSquare(piece.color, x, y, piece.king, piece.selected)
           })}
+          <controls/>
         </div>)
     }))
   }
+
+  setThreads(input){
+   this.threads = input
+  }
+
+  setIterations(input){
+    this.iterations = input
+  }
+
 
   render() {
     const status = 'Player Turn: ';
 
     return (
-      <div className="board">
+        <div style={{display:"flex",flexDirection:"row"}}>
+          <Controls
+              reset = {this.reset.bind(this)}
+          getThreads = {this.setThreads.bind(this)}
+          getIterations = {this.setIterations.bind(this)}
+          />
+            <div className="board">
+              <div className="status">{status + this.state.playerTurn}</div>
+              {this.displayBoard()}
+            </div>
 
-        <div className="status">{status + this.state.playerTurn}</div>
 
-        {this.displayBoard()}
+        </div>
 
-      </div>
     );
   }
 }

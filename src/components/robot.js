@@ -43,7 +43,9 @@ class Robot {
     }
 
 
-    async playTurn(boardState) {
+    async playTurn(boardState, iterations, threads) {
+
+        console.log(`making a move with ${iterations} iterations and ${threads} threads`)
 
         if (this.difficulty === 'easy') {
             return this.makeRandomTurn(boardState, this.color);
@@ -60,8 +62,8 @@ class Robot {
               let request = {
                 board:JSON.parse(boardJson),
                 color:this.color,
-                iterations:this.iterations,
-                threads:this.threads
+                iterations:iterations,
+                threads:threads
               }
 
               var move;

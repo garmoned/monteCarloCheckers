@@ -1,6 +1,7 @@
 import Board from "./board"
 import Controls from "./controls"
 import React from "react"
+import controls from "./controls";
 
 class App extends React.Component {
     constructor() {
@@ -17,8 +18,8 @@ class App extends React.Component {
             <div>
                 <div className="game" >
                     <Board />
-                    <Controls></Controls>
                 </div>
+
             </div>
 
         )
