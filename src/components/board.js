@@ -24,7 +24,7 @@ class board extends React.Component {
 
     //this.robots.push(new Robot('hard', 'w' , 1000, 5))
 
-    this.robots.push(new Robot('hard', 'r' , 1000, 50))
+    this.robots.push(new Robot('hard', 'r', 1000, 50))
 
     this.state = {
 
@@ -32,7 +32,7 @@ class board extends React.Component {
       capturePossible: false,
       selectedPiece: null,
       bState: this.initBoardState(),
-      humanColor :"w"
+      humanColor: "w"
 
     }
 
@@ -111,9 +111,9 @@ class board extends React.Component {
   changeSelection = async (row, column) => {
 
     if (this.state.selectedPiece === null || (
-      this.state.selectedPiece !== null &&(
-      this.state.selectedPiece.x !== row ||
-      this.state.selectedPiece.y !== column))) {
+      this.state.selectedPiece !== null && (
+        this.state.selectedPiece.x !== row ||
+        this.state.selectedPiece.y !== column))) {
 
       await this.selectPiece(row, column);
 
@@ -248,17 +248,17 @@ class board extends React.Component {
     }
   }
 
-  reset = () =>{
+  reset = () => {
 
-    this.setState({bState:this.initBoardState(), playerTurn:'r'})
+    this.setState({ bState: this.initBoardState(), playerTurn: 'r' })
     setTimeout(() => {
 
       this.robots
-          .forEach((robot) => {
-            if (this.state.playerTurn === robot.color) {
-              this.makeRobotMove(this.state.bState, robot, this.threads, this.iterations);
-            }
-          })
+        .forEach((robot) => {
+          if (this.state.playerTurn === robot.color) {
+            this.makeRobotMove(this.state.bState, robot, this.threads, this.iterations);
+          }
+        })
 
     }, 10)
   }
@@ -309,7 +309,7 @@ class board extends React.Component {
 
   makeRobotMove = async (boardState, robot) => {
 
-    let roboMove = await robot.playTurn(boardState,this.iterations,this.threads);
+    let roboMove = await robot.playTurn(boardState, this.iterations, this.threads);
     console.log(roboMove, "<-- roboMove")
 
 
@@ -450,17 +450,17 @@ class board extends React.Component {
           {row.map((piece, y) => {
             return this.renderSquare(piece.color, x, y, piece.king, piece.selected)
           })}
-          <controls/>
+          <controls />
         </div>)
     }))
   }
 
-  setThreads(input){
-   this.threads = input
+  setThreads(input) {
+    this.threads = parseInt(input)
   }
 
-  setIterations(input){
-    this.iterations = input
+  setIterations(input) {
+    this.iterations = parseInt(input)
   }
 
 
@@ -468,19 +468,19 @@ class board extends React.Component {
     const status = 'Player Turn: ';
 
     return (
-        <div style={{display:"flex",flexDirection:"row"}}>
-          <Controls
-              reset = {this.reset.bind(this)}
-          getThreads = {this.setThreads.bind(this)}
-          getIterations = {this.setIterations.bind(this)}
-          />
-            <div className="board">
-              <div className="status">{status + this.state.playerTurn}</div>
-              {this.displayBoard()}
-            </div>
-
-
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <Controls
+          reset={this.reset.bind(this)}
+          getThreads={this.setThreads.bind(this)}
+          getIterations={this.setIterations.bind(this)}
+        />
+        <div className="board">
+          <div className="status">{status + this.state.playerTurn}</div>
+          {this.displayBoard()}
         </div>
+
+
+      </div>
 
     );
   }
